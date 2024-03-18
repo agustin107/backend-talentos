@@ -1,8 +1,11 @@
 const express = require('express');
+const cors = require('cors');
 const fs = require('fs');
 const app = express();
 const port = 3000;
 const allUsers = 'user.json';
+
+app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
@@ -31,13 +34,16 @@ app.post('/login', (req, res) => {
       const objJSON = JSON.parse(data);
       const { user, password } = req.body;
 
-      if (
-        objJSON.usuarios.user === user &&
-        objJSON.usuarios.password === password
-      ) {
-        res.send('bienvendo');
+      console.log('recibi este usuario', user);
+
+      const usuarioEncontrado = objJSON.usuarios.find(
+        (usuario) => usuario.user === user && usuario.password === password
+      );
+
+      if (usuarioEncontrado !== undefined) {
+        res.json('bienvendo');
       } else {
-        res.send('usuario no encontrado');
+        res.json('usuario no encontrado');
       }
     } catch (parseError) {
       console.error('error al leer el json: ', parseError);
